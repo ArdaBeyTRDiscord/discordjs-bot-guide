@@ -1,8 +1,6 @@
-# Your First Bot
+# Bot Yapmak
 
-This chapter assumes you've followed the Getting Started chapter and your bot code compiles. Also, I have to repeat: if you don't understand the code you're about to see, coding a bot might not be for you. Go to [CodeAcademy](https://www.codecademy.com/learn/javascript) and learn Javascript.
-
-In this chapter I'll guide you through the development of a simple bot with some useful commands. We'll start with the example we created in the first chapter:
+Bu bölüm, Başlarken bölümünü ve bot kodunuzun derlediğini varsayar. Ayrıca, tekrarlamak zorundayım: Görmek üzere olduğunuz kodu anlamadıysanız, bir botun kodlanması sizin için olmayabilir. [CodeAcademy] (https://www.codecademy.com/learn/javascript) adresine gidin ve Javascript'i öğrenin. Bu bölümde, bazı yararlı komutlarla basit bir botun geliştirilmesi konusunda size rehberlik edeceğim. İlk bölümde oluşturduğumuz örnekle başlayacağız:
 
 ```javascript
 const Discord = require("discord.js");
@@ -13,15 +11,15 @@ client.on("ready", () => {
 });
  
 client.on("message", (message) => {
-  if (message.content.startsWith("ping")) {
-    message.channel.send("pong!");
+  if (message.content.startsWith("merhaba")) {
+    message.channel.send("merhaba ben bot");
   }
 });
  
-client.login("SuperSecretBotTokenHere");
+client.login("TokenBuraya");
 ```
 
-## Introducing Events
+## Eventleri Tanıtıyoruz
 
 Before we dive into any further coding, we need to first understand what an _Event_ is.
 
@@ -33,45 +31,33 @@ client.on("message", (message) => {
 });
 ```
 
-This is, specifically, an event in _discord.js_ but it's similar to how other APIs handle events. This event triggers _every time the bot sees a message_. This includes every channel the bot has access to as well as any direct or private message it receives. If someone sends 5 messages on a channel, this event fires 5 times.
+Bu, özellikle, _discord.js_ dosyasındaki bir etkinliktir, ancak diğer API'lerin etkinlikleri nasıl ele aldığına benzer. Bu olay, botun bir mesaj gördüğü her zaman tetikler. Bu, botun eriştiği her kanalı ve aldığı herhangi bir doğrudan veya özel mesajı içerir. Birisi bir kanala 5 mesaj gönderirse, bu olay 5 kez ateşlenir. Bu neden önemli? Botunuzu büyük bir sunucuda kullanmayı düşünüyorsanız veya birden fazla sunucuda olmasını istiyorsanız, bu her an tetikleyen çok sayıda etkinliğe dönüşür. Çok fazla optimizasyon konusuna girmek istemiyorum, ama tek bir nokta için: ** her etkinlik için tek bir olay fonksiyonu kullanın **. Discord.js, belirli durumlarda tetiklenebilecek çok sayıda etkinlik içerir. Örneğin, "hazır" etkinliği, bot çevrimiçi olduğunda tetiklenir. "GuildMemberAdd" etkinliği, yeni bir kullanıcı botla paylaşılan bir sunucuya katıldığında tetiklenir. Etkinliklerin tam listesi için bkz. [Dokümantasyondaki olaylar] (https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=channelCreate). Bu bölümün ilerleyen kısımlarına geri döneceğiz.
 
-Why is this important? Well, if you intend to use your bot on a large server, or if you want it to be on multiple servers, this becomes a large number of events triggering at every moment. I don't want to go into too much optimization talk, but for a single point: **use a single event function for each event**.
+## 1 Tane Daha Komut Eklemek
 
-Discord.js contains a large number of events that can trigger under certain situations. For instance, the `ready` event triggers when the bot comes online. The `guildMemberAdd` event triggers when a new user joins a server shared with the bot. For a full list of events, see [Events in the documentation](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=channelCreate). We will come back to some of those later in this chapter.
-
-## Adding a second command
-
-One of the first useful things you might want to learn is how to add a second command to your bot. While there are _better_ ways than what I'm about to show you, for the time being this will be enough.
+Yapmak isteyebileceğiniz ilk yararlı şeylerden biri, botunuza ikinci bir komut eklemektir.Şimdilik bu yeterli olacaktır.
 
 {% hint style="info" %}
-From now on I will omit the code that requires and initiates the discord.js and concentrate on specific parts of the code.
+Bundan sonra discord.js'yi gerektiren ve başlatan kodu kaldıracağım ve kodun belirli bölümlerine yoğunlaşacağım.
 {% endhint %}
 
 ```javascript
 client.on("message", (message) => {
-  if (message.content.startsWith("ping")) {
-    message.channel.send("pong!");
+  if (message.content.startsWith("sa")) {
+    message.channel.send("as");
   } else
  
-  if (message.content.startsWith("foo")) {
-    message.channel.send("bar!");
+  if (message.content.startsWith("naber")) {
+    message.channel.send("iyi");
   }
 });
 ```
 
-Save your code and reload your bot. To do so, use `CTRL+C` in the command line, and re-run `node mybot.js`. Yes, there are better ways to reload the code, as you will see later in this book.
+Kodunuzu kaydedin ve botunuzu yeniden yükleyin. Bunu yapmak için , komut satırında `CTRL + C 'kullanın ve' node bot.js 'dosyasını yeniden çalıştırın. Evet, bu kitapta daha sonra göreceğiniz gibi, kodu yeniden yüklemek için daha iyi yollar vardır. Yeni komutunuzu botla paylaştığınız bir kanalda `sa 'diyerek test edebilirsiniz. Ayrıca 'naber' nin hala 'iyi' değerini döndürdüğünü de onaylayabilirsiniz!
 
-You can test your new command by saying `foo` in a channel you share with the bot. You can also confirm that `ping` still returns `pong`!
+## Prefix Kullanarak Komut Yapmak
 
-## Using a Prefix
-
-You might have noticed that a lot of bots respond to commands that have a prefix. This might be an exclamation mark \(!\), a dot \(.\), a question mark\(?\), or another character. This is useful for two things.
-
-First, if you don't use a unique prefix and have more than one bot on a server, both will respond to the same commands. On developer servers, typing `!help` leads to a flood of replies and private messages which is something to avoid.
-
-Second, in the example above we respond when the message _starts with_ the 3 characters, `foo`. In its current state, this means the following sentence will trigger the bot's response: **fool, you have not heard the last of me!**. Yes, that's an odd example, but it's still valid - say this on your bot's channel and he will respond.
-
-To work around this, we'll be using prefix, which we will store in a variable. This way we get the prefix as well as the ability to change it for all commands in one place. Here's an example code that does this:
+prefix içeren komutlara çok sayıda botun yanıt verdiğini fark etmiş olabilirsiniz. Bu bir ünlem işareti olabilir \ (! \), Bir nokta \ (. \), Bir soru işareti \ (? \) Veya başka bir karakter olabilir. Bu iki şey için yararlıdır. Öncelikle, benzersiz bir önek kullanmıyorsanız ve bir sunucuda birden fazla botunuz varsa, her ikisi de aynı komutlara cevap verecektir. Geliştirici sunucularında, `! Help` yazarak, kaçınılması gereken bir şey olan cevapların ve özel mesajların taşmasına yol açar. İkincisi, yukarıdaki örnekte, _starts 3_, `foo` ile mesaj verildiğinde yanıt veririz. Şu anki haliyle, bu aşağıdaki cümlenin botun tepkisini tetikleyeceği anlamına gelir: ** aptal, sonuncusu duymadınız! **. Evet, bu garip bir örnek, ama yine de geçerli - bu, botunuzun kanalında söyleyin ve cevap verecektir. Bu konuda çalışmak için bir değişkende saklayacağımız önek kullanıyoruz. Böylelikle önek ve tüm komutlar için tek bir yerde değiştirebilme yeteneği elde ederiz. İşte bunu yapan bir örnek kod:
 
 ```javascript
 // Set the prefix
@@ -83,17 +69,17 @@ client.on("message", (message) => {
   if (message.content.startsWith(prefix + "ping")) {
     message.channel.send("pong!");
   } else
-  if (message.content.startsWith(prefix + "foo")) {
-    message.channel.send("bar!");
+  if (message.content.startsWith(prefix + "sa")) {
+    message.channel.send("as");
   }
 });
 ```
 
 The changes to the code are still simple. Let's go through them:
 
-* `const prefix = "!";` defines the prefix as the exclamation mark. You can change it to something else, of course.
-* The line `if(!msg.content.startsWith(prefix)) return;` is a small bit of optimization which reads: "If the message does not start with my prefix, stop what you're doing". This prevents the rest of the function from running, making your bot faster and more responsive.
-* The commands have changed so use this prefix, where `startsWith(prefix + "ping")` would only be triggered when the message starts with `!ping`.
+* `const prefix = "!";` burdan prefix ayarlayabilirsiniz.
+* The line `if(!msg.content.startsWith(prefix)) return;` küçük bir optimizasyon bitiştir: "Eğer mesaj önekimle başlamıyorsa, ne yaptığınızı durdurun". Bu, işlevin geri kalanının çalışmasını engelleyerek botunuzu daha hızlı ve daha duyarlı hale getirir.
+* Komutlar değişti, bu nedenle bu öneki `startsWith(prefix + "ping")` komut kullanıldığında bot mesajı cevaplar `!ping`.
 
 The second point is just as important as having a single `message` event handler. Let's say the bot receives a hundred messages every minute \(not much of an exaggeration on popular bots\). If the function does not break off at the beginning, you are processing these hundred messages in each of your command conditions. If, on the other hand, you break off when the prefix is not present, you are saving all these processor cycles for better things. If commands are 1% of your messages, you are saving 99% processing power...
 
